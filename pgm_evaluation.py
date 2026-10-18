@@ -228,7 +228,7 @@ def cost_table(ns=(256, 1024, 4096, 65536)) -> list[dict]:
 def verdict_spread(a: Analysis) -> tuple[str, str]:
     kind = "warning" if a.cv > 0.8 else "info"
     return kind, (f"Die Werte streuen um ihren Erwartungswert mit Std/Mittel **{de(a.cv, 2)}**; ein Exponentialverteilter hat genau 1,00. "
-                  f"Mehr Werte (n) ändern daran nichts, sie machen nur die Frequenzachse feiner ({a.settings.n // 2 + 1} Bins).")
+                  f"Mehr Werte (n) ändern daran bei weißem Rauschen nichts, sie machen nur die Frequenzachse feiner ({a.settings.n // 2 + 1} Bins).")
 
 
 def verdict_variation(rows: list[dict]) -> tuple[str, str]:

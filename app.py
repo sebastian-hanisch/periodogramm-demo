@@ -44,8 +44,8 @@ st.title("📈 Das Periodogramm: je mehr Daten, desto feiner, aber nicht ruhiger
 st.markdown(
     """
 Das **Periodogramm** ist die direkte Antwort der Fourier-Transformation auf die Frage, bei welcher **Frequenz** wie viel **Leistung** steckt. Es ist
-fast **erwartungstreu**, aber nicht **konsistent**: Jeder Wert streut um seinen Erwartungswert so stark wie dessen Betrag, bei 64 Messwerten wie bei
-4096. Mehr Daten machen die Frequenzachse feiner und **Linien** höher, den **Untergrund** aber nicht ruhiger.
+fast **erwartungstreu**, aber nicht **konsistent**: Jeder Wert eines inneren Bins streut bei weißem Gauß-Rauschen um seinen Erwartungswert so stark wie dessen Betrag, bei 64
+Messwerten wie bei 4096 (bei stark farbigem Hintergrund und an den Randbins 0 und Nyquist weicht das ab). Mehr Daten machen die Frequenzachse feiner und **Linien** höher, den **Untergrund** aber nicht ruhiger.
 
 Dies ist die erste Demo der Reihe „Spektral- und Wavelet-Analyse“ und hat nichts mit „Spectral Clustering“ zu tun (dort sind es Eigenwerte eines
 Graphen, hier Frequenzen eines Signals). Alles ist **simuliert**: Das wahre Spektrum ist bekannt, deshalb lässt sich jede Abweichung messen. Weiter unten:
@@ -58,10 +58,10 @@ with st.expander("So funktioniert das Periodogramm", expanded=True):
         """
 1. **Messwerte in Frequenzen zerlegen:** Die schnelle Fourier-Transformation (FFT) berechnet aus den n Messwerten die Werte $X_k$ bei den Frequenzen $k \\cdot f_s / n$.
 2. **Leistung je Hz:** $I(f) = |X(f)|^2 / (n \\cdot f_s)$, das Periodogramm. Eine Linie erscheint als Gipfel, Rauschen als Zackenteppich.
-3. **Warum es nicht ruhiger wird:** Bei Rauschen ist $X(f)$ komplex normalverteilt, $|X|^2$ also exponentialverteilt mit **Streuung gleich Mittelwert**.
+3. **Warum es nicht ruhiger wird:** Bei weißem Gauß-Rauschen ist $X(f)$ an inneren Bins komplex normalverteilt, $|X|^2$ also exponentialverteilt mit **Streuung gleich Mittelwert**.
    Doppelt so viele Messwerte ergeben doppelt so viele Bins, aber keine Mittelung je Bin.
 4. **Abtastung:** Wer langsamer abtastet, als es das Signal verlangt, bekommt Frequenzen oberhalb der halben Abtastrate an anderer Stelle zurück
-   (**Aliasing**), und Rauschen faltet sich in das Band. Ein Tiefpass vorher verhindert das, kostet aber Nutzband.
+   (**Aliasing**), und Rauschen faltet sich in das Band. Ein Tiefpass vorher unterdrückt das weitgehend, kostet aber Nutzband.
         """
     )
 
@@ -111,7 +111,7 @@ m3.metric("Linie über dem Untergrund", f"{de(10 * math.log10(a.line_peak / a.fl
 m4.metric("Std / Mittel (gegen Erwartung)", de(a.cv, 2), delta="Exponentialverteilung: 1,00", delta_color="off")
 st.plotly_chart(build_periodogram(a), width="stretch", key="periodogram_chart")
 st.caption("Blau: das Periodogramm dieser Folge. Orange: sein exakter Erwartungswert. Grün gepunktet: die wahre Dichte des Hintergrunds. "
-           "Rot gestrichelt: die scheinbare Frequenz der Linie. Der Zackenteppich liegt im Mittel 2,5 dB unter dem Erwartungswert und streut um 5,6 dB (Logarithmus).")
+           "Rot gestrichelt: die scheinbare Frequenz der Linie. Der Zackenteppich (weißes Rauschen) liegt im Mittel 2,5 dB unter dem Erwartungswert und streut um 5,6 dB (Logarithmus).")
 st.plotly_chart(build_signal(a), width="stretch", key="signal_chart")
 
 if st.button("📄 PDF erstellen", key="pdf_make"):
@@ -197,10 +197,10 @@ st.markdown(
 | Annahme | Was passiert, wenn sie verletzt ist | Wer setzt an |
 |---|---|---|
 | **Stationär**: Das Spektrum ändert sich über die Aufzeichnung nicht | Eine wandernde Frequenz hinterlässt eine Spur statt eines Gipfels, das Periodogramm sagt nicht, wann (in dieser Demo nicht gemessen). | Spektrogramm |
-| **Nur Rechteckfenster** | Leckage hebt die Täler: im Hintergrund „Steil“ liegt der Mittelwert bei n = 128 um 17,9 dB über der wahren Dichte. | Gitter, Fenster, Linienlage |
+| **Nur Rechteckfenster** | Leckage hebt die Täler: im Hintergrund „Steil“ liegt der Mittelwert bei n = 128 im Tal (0,49 f_s) um 17,9 dB über der wahren Dichte. | Gitter, Fenster, Linienlage |
 | **Gleichmäßige Abtastzeitpunkte** | Bei Lücken oder unregelmäßigen Zeiten gilt die FFT-Formel nicht. | Lomb-Scargle |
 | **Eine Aufzeichnung** | Die Streuung je Bin bleibt; Mitteln über Segmente oder Taper senkt sie, kostet aber Auflösung. | Bartlett und Welch, Multitaper |
-| **Ein Generator** | Linien plus AR-Hintergrund mit Gauß- oder gleichverteiltem Rauschen. Reale Spektren haben Linienscharen, Drift und Ausreißer. | – |
+| **Ein Generator** | Linien plus AR- oder weißer Hintergrund mit normalverteiltem Rauschen. Reale Spektren haben Linienscharen, Drift und Ausreißer. | – |
 """
 )
 
@@ -216,8 +216,9 @@ $I(f) = \dfrac{1}{n f_s}\Big|\sum_{m=0}^{n-1} x[m]\,e^{-2\pi i f m / f_s}\Big|^2
 $E[I(f)] = \dfrac{1}{n f_s}\Big(|S(f)|^2 + \sum_{|\tau| < n} (n - |\tau|)\, r(\tau)\cos(2\pi f \tau / f_s)\Big)$, $S(f) = \sum s[m] e^{-2\pi i f m / f_s}$.
 Das ist die Faltung der wahren Dichte mit dem Fejér-Kern: Leckage ist Bias.
 
-**Verteilung.** Bei Gauß'schem Rauschen und $f$ im Inneren ist $I(f)/S(f)$ exponentialverteilt mit Mittelwert 1 und Standardabweichung 1;
+**Verteilung.** Bei weißem Gauß-Rauschen und $f$ im Inneren ist $I(f)/S(f)$ exponentialverteilt mit Mittelwert 1 und Standardabweichung 1;
 $10\log_{10}$ davon hat den Mittelwert $-10\log_{10}(e)\,\gamma = -2{,}51$ dB und die Standardabweichung $10\log_{10}(e)\,\pi/\sqrt{6} = 5{,}57$ dB.
+Bei farbigem Rauschen gilt das für $n \to \infty$ näherungsweise für $I(f)/E[I(f)]$.
 
 **Aliasing.** Nimmt man jeden $q$-ten Wert (nach einem Filter $H$), ist die Dichte der Folge
 $S_y(f) = \sum_{k} |H(f + k f_s/q)|^2\, S(f + k f_s/q)$, summiert über alle Spiegelbilder innerhalb der alten Nyquist-Grenze;
