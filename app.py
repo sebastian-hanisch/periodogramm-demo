@@ -53,6 +53,17 @@ Graphen, hier Frequenzen eines Signals). Alles ist **simuliert**: Das wahre Spek
 """
 )
 
+# erklaerseite:einfach:start (erzeugt von tools/set_demo_explainer.py (Website-Repo) aus tools/content/explainers/periodogramm-erklaert.json, nicht von Hand ändern)
+with st.expander("💬 In einfachen Worten"):
+    st.markdown(
+        """
+Ein Mikrofon nimmt ein Brummen auf, dazu rauscht es. Das **Periodogramm** zeigt als Reihe von Balken, wie stark jede Tonhöhe in der Aufnahme vorkommt. Man würde erwarten, dass das Bild bei längerer Aufnahme ruhiger wird. Es wird aber nur feiner: Es gibt mehr Balken, doch jeder einzelne schwankt genauso stark wie zuvor. Ein echter Ton dagegen ragt mit der Länge deutlicher heraus. Die Demo erzeugt künstliche Aufnahmen, deren Wahrheit bekannt ist. Sie zeigt außerdem, was passiert, wenn man zu selten misst (ein Ton erscheint an der falschen Stelle) und wie ein sehr lauter Bereich in leise Bereiche ausstrahlt. Alles ist simuliert, nichts stammt von echten Geräten.
+
+[Ausführlich und verständlich erklärt, mit Fachteil](https://sebastianhanisch.net/periodogramm-erklaert.html)
+        """
+    )
+# erklaerseite:einfach:end
+
 with st.expander("So funktioniert das Periodogramm", expanded=True):
     st.markdown(
         """
@@ -207,6 +218,26 @@ st.markdown(
 st.markdown("---")
 
 with st.expander("📐 Mathematische Formulierung"):
+    # erklaerseite:lesehilfe:start (erzeugt von tools/set_demo_explainer.py (Website-Repo) aus tools/content/explainers/periodogramm-erklaert.json, nicht von Hand ändern)
+    st.markdown(
+        r"""
+**Lesehilfe.** Gegeben ist eine Folge von $n$ Messwerten $x[0], \dots, x[n-1]$, aufgenommen mit der Rate $f_s$: eine Linie (oder keine) plus Rauschen mit bekanntem Spektrum. Gesucht ist, wie das Periodogramm $I(f)$ um seinen Erwartungswert streut, wie hoch eine Linie über dem Untergrund steht und was bei zu langsamer Abtastung geschieht.
+
+| Symbol | Bedeutung |
+|---|---|
+| $x[m]$ | Messwert zum Zeitschritt $m$ |
+| $n$ | Zahl der Messwerte |
+| $f_s$ | Abtastrate der Folge (Messwerte pro Sekunde) |
+| $f_k$ | Frequenz des Bins $k$, also $k f_s / n$ |
+| $I(f)$ | Periodogramm: Leistung je Hz bei der Frequenz $f$ |
+| $r(\tau)$ | Autokovarianz des Rauschens bei der Verschiebung $\tau$ |
+| $S(f)$ | Fourier-Summe der deterministischen Linienfolge $s$ |
+| $q$, $H$ | Abtastfaktor (jeder $q$-te Wert bleibt) bzw. Frequenzgang des Tiefpasses |
+
+[Schritt für Schritt erklärt, mit Herleitung und Literatur](https://sebastianhanisch.net/periodogramm-erklaert.html#fachleute)
+        """
+    )
+    # erklaerseite:lesehilfe:end
     st.markdown(
         r"""
 **Periodogramm.** Für $x[0], \dots, x[n-1]$ mit Abtastrate $f_s$ ist
