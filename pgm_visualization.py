@@ -53,11 +53,11 @@ def build_periodogram(a: Analysis) -> go.Figure:
 def build_variation(rows) -> go.Figure:
     xs = [r["n"] for r in rows]
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=xs, y=[r["cv"] for r in rows], mode="lines+markers", line=dict(color=C.COLOR_I, width=3), name="Std / Mittel je Bin",
+    fig.add_trace(go.Scatter(x=xs, y=[r["cv"] for r in rows], mode="lines+markers", line=dict(color=C.COLOR_I, width=3), name="Variationskoeffizient je Bin",
                              hovertemplate="n = %{x}: %{y:.2f}<extra></extra>"))
     fig.add_hline(y=1.0, line=dict(color="gray", dash="dot"), annotation_text="Exponentialverteilung: 1,00")
     fig.update_xaxes(title_text="Länge n", type="log", tickvals=xs)
-    fig.update_yaxes(title_text="Std / Mittel von I / S", range=[0, 1.4])
+    fig.update_yaxes(title_text="Variationskoeffizient von I / S", range=[0, 1.4])
     return _fixed(fig, height=320)
 
 

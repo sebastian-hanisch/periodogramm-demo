@@ -13,7 +13,7 @@ def _analysis(cv: float, n: int = 512):
 
 def test_spread_verdict_is_a_warning_near_one_and_names_the_number_and_the_bins():
     kind, text = ev.verdict_spread(_analysis(1.02, 512))
-    assert kind == "warning" and "Std/Mittel **1,02**" in text and "(257 Bins)" in text
+    assert kind == "warning" and "Variationskoeffizienten **1,02**" in text and "(257 Bins)" in text
 
 
 def test_spread_verdict_threshold_at_0_8():

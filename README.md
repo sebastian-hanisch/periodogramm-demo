@@ -25,7 +25,7 @@ Rechteckfenster; sein Erwartungswert ist über die Autokovarianz exakt berechenb
 
 Ein Signal, vier Hintergründe (weiß, Tiefpass, Resonanz, Steil), sieben Abtastungen (jeder Wert, jeder 2./4./8., je mit oder ohne Tiefpass vorher).
 Verglichen wird das Periodogramm mit seinem exakten Erwartungswert, mit der wahren Dichte vor der Abtastung und mit der Dichte der gewonnenen Folge
-(gefaltet, gegebenenfalls gefiltert). Vier Experimente laufen auf Klick über feste Zufallsströme.
+(gefaltet, gegebenenfalls gefiltert). Vier Experimente laufen auf Klick über feste Zufalls-Seeds.
 
 ## Befunde (gemessen, keine Behauptungen)
 
@@ -33,11 +33,11 @@ Alle Zahlen stehen in `tests/test_claims.py`.
 
 | Frage | Befund |
 |---|---|
-| Wird die Streuung je Bin mit mehr Daten kleiner? (weißes Rauschen, n = 64 bis 4096) | **Nein:** Std/Mittel von I/S ist 1,00 bei allen untersuchten Längen (Exponentialverteilung); P(I > 3 S) liegt bei 5,0 %. |
+| Wird die Streuung je Bin mit mehr Daten kleiner? (weißes Rauschen, n = 64 bis 4096) | **Nein:** Der Variationskoeffizient (Std/Mittel) von I/S ist 1,00 bei allen untersuchten Längen (Exponentialverteilung); P(I > 3 S) liegt bei 5,0 %. |
 | Wie liegt das Periodogramm im Logarithmus? | Mittel −2,5 dB unter dem Erwartungswert, Streuung 5,6 dB (Theorie: −2,51 und 5,57 dB), unabhängig von n. |
 | Was wächst mit n? | Die Linie: 6 / 10 / 16 / 22 dB über dem Untergrund bei n = 64 / 256 / 1024 / 4096 (−10 dB je Abtastwert); für größere n wächst die Linie um rund 6 dB je Vervierfachung (+10·log₁₀ n), bei kleinem n etwas weniger. Sie ist in rund 45 / 90 / 100 / 100 % der Läufe der höchste Wert. |
 | Wo liegt der Mittelwert falsch? (Hintergrund „Steil“, 57 dB Spannweite) | Im Tal bei 0,49 f_s um 17,9 / 11,9 / 6,7 dB über der wahren Dichte (n = 128 / 512 / 2048): Leckage des Rechteckfensters, sie fällt mit n. Am Resonanzgipfel (0,2 f_s) liegt der Fehler ab n = 512 unter 1 dB. |
-| Wie viel verliert eine Linie zwischen zwei Bins? | ¼ Bin neben dem Gitterpunkt −0,9 dB, ½ Bin −3,9 dB (sinc²). |
+| Wie viel verliert eine Linie zwischen zwei Bins (Scalloping Loss)? | ¼ Bin neben dem Gitterpunkt −0,9 dB, ½ Bin −3,9 dB (sinc²). |
 | Was tut zu langsames Abtasten mit dem Rauschen? (Hintergrund „Tiefpass“, oberes Band) | Im Hintergrund „Tiefpass“ liegt das obere Band (80 bis 95 % der neuen Nyquist-Frequenz) nach jedem 2. / 4. / 8. Wert um 2,2 / 2,8 / 3,1 dB zu hoch; das gemessene Niveau stimmt mit der gefalteten Dichte überein (innerhalb 0,35 dB). |
 | Was kostet der Tiefpass? | −6 dB bei 0,9 der neuen Nyquist-Frequenz (Vorgabe); bei der Nyquist-Frequenz selbst −14,5 dB (Faktor 8) bzw. −29,9 dB (Faktor 4), weil die Länge fest 129 Taps ist. |
 | Rechenaufwand | n = 1024: 1.048.576 komplexe Multiplikationen direkt, 5.120 mit Radix-2-FFT. |

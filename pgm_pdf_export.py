@@ -30,7 +30,7 @@ def build_pdf(a: Analysis) -> bytes:
     lines = [
         f"Scheinbare Frequenz der Linie: {de(a.apparent, 1)} Hz; höchster Wert des Periodogramms bei {de(a.peak_f, 1)} Hz "
         f"({'die Linie' if a.line_is_max else 'nicht die Linie'}).",
-        f"Streuung der Werte um den exakten Erwartungswert (Std/Mittel): {de(a.cv, 2)}; für eine Exponentialverteilung gilt 1,00.",
+        f"Streuung der Werte um den exakten Erwartungswert (Variationskoeffizient): {de(a.cv, 2)}; für eine Exponentialverteilung gilt 1,00.",
         f"Bins ohne Linie, die über dem Linienwert liegen: {a.higher} von {len(a.f) - 1}.",
     ]
     for line in lines:

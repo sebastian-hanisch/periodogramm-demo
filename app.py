@@ -119,7 +119,7 @@ m1.metric("Scheinbare Frequenz der Linie", f"{de(a.apparent, 1)} Hz", delta="wah
           delta_color="off")
 m2.metric("Höchster Wert bei", f"{de(a.peak_f, 1)} Hz", delta="die Linie" if a.line_is_max else "nicht die Linie", delta_color="off")
 m3.metric("Linie über dem Untergrund", f"{de(10 * math.log10(a.line_peak / a.floor), 1)} dB", delta=f"{a.higher} Bins darüber", delta_color="off")
-m4.metric("Std / Mittel (gegen Erwartung)", de(a.cv, 2), delta="Exponentialverteilung: 1,00", delta_color="off")
+m4.metric("Variationskoeffizient (gegen Erwartung)", de(a.cv, 2), delta="Exponentialverteilung: 1,00", delta_color="off")
 st.plotly_chart(build_periodogram(a), width="stretch", key="periodogram_chart")
 st.caption("Blau: das Periodogramm dieser Folge. Orange: sein exakter Erwartungswert. Grün gepunktet: die wahre Dichte des Hintergrunds. "
            "Rot gestrichelt: die scheinbare Frequenz der Linie. Der Zackenteppich (weißes Rauschen) liegt im Mittel 2,5 dB unter dem Erwartungswert und streut um 5,6 dB (Logarithmus).")
@@ -142,7 +142,7 @@ st.markdown("---")
 # --- Experimente ---------------------------------------------------------------------------------------------------------------------------
 
 st.subheader("🔬 Experimente")
-st.caption("Je Experiment feste Zufallsströme (Seed 100000 und folgende), unabhängig von den Reglern. Die Rechnung dauert einige Sekunden und läuft erst auf Klick.")
+st.caption("Je Experiment feste Zufalls-Seeds (100000 und folgende), unabhängig von den Reglern. Die Rechnung dauert einige Sekunden und läuft erst auf Klick.")
 if st.button("🔬 Experimente rechnen", key="run_experiments"):
     st.session_state["experiments_ready"] = True
 if st.session_state.get("experiments_ready"):
@@ -152,7 +152,7 @@ if st.session_state.get("experiments_ready"):
     st.markdown("#### Mehr Daten, gleiche Streuung")
     st.caption("Weißes Rauschen, je Länge 800 / 400 / 200 / 100 Läufe; ohne Bin 0 und Nyquist-Bin.")
     st.plotly_chart(build_variation(exp["variation"]), width="stretch", key="exp_variation")
-    st.dataframe(pd.DataFrame([{"n": r["n"], "Läufe": r["runs"], "Mittel I/S": de(r["mean"], 2), "Std/Mittel": de(r["cv"], 2), "P(I > 3 S)": de(100 * r["p_gt3"], 1) + " %",
+    st.dataframe(pd.DataFrame([{"n": r["n"], "Läufe": r["runs"], "Mittel I/S": de(r["mean"], 2), "Variationskoeffizient": de(r["cv"], 2), "P(I > 3 S)": de(100 * r["p_gt3"], 1) + " %",
                                 "Bias des Logarithmus (dB)": de(r["db_bias"], 2), "Std des Logarithmus (dB)": de(r["db_std"], 2)} for r in exp["variation"]]),
                  hide_index=True, width="stretch")
     kind, text = ev.verdict_variation(exp["variation"])
@@ -167,7 +167,7 @@ if st.session_state.get("experiments_ready"):
     st.markdown("#### Wo der Mittelwert falsch liegt")
     st.caption(f"Hintergrund „Steil“ (56,7 dB Spannweite), Rechteckfenster, je Länge {C.EXP_BIAS_RUNS} Läufe; Simulation gegen die exakte Formel.")
     st.plotly_chart(build_bias(exp["bias"]), width="stretch", key="exp_bias")
-    st.dataframe(pd.DataFrame([{"Linie ... Bins neben dem Gitterpunkt": de(r["offset"], 2), "Verlust des Gipfels (dB)": de(r["loss_db"], 2)} for r in exp["scallop"]]),
+    st.dataframe(pd.DataFrame([{"Linie ... Bins neben dem Gitterpunkt": de(r["offset"], 2), "Verlust des Gipfels, Scalloping Loss (dB)": de(r["loss_db"], 2)} for r in exp["scallop"]]),
                  hide_index=True, width="stretch")
     kind, text = ev.verdict_bias(exp["bias"], exp["scallop"])
     getattr(st, kind)(text)
@@ -231,8 +231,8 @@ with st.expander("📐 Mathematische Formulierung"):
 | $f_k$ | Frequenz des Bins $k$, also $k f_s / n$ |
 | $I(f)$ | Periodogramm: Leistung je Hz bei der Frequenz $f$ |
 | $r(\tau)$ | Autokovarianz des Rauschens bei der Verschiebung $\tau$ |
-| $S(f)$ | Fourier-Summe der deterministischen Linienfolge $s$ |
-| $q$, $H$ | Abtastfaktor (jeder $q$-te Wert bleibt) bzw. Frequenzgang des Tiefpasses |
+| $S(f)$ | Fourier-Transformierte der deterministischen Linienfolge $s$ |
+| $q$, $H$ | Dezimationsfaktor (jeder $q$-te Wert bleibt) bzw. Frequenzgang des Tiefpasses |
 
 [Schritt für Schritt erklärt, mit Herleitung und Literatur](https://sebastianhanisch.net/periodogramm-erklaert.html#fachleute)
         """

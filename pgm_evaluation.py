@@ -227,13 +227,13 @@ def cost_table(ns=(256, 1024, 4096, 65536)) -> list[dict]:
 
 def verdict_spread(a: Analysis) -> tuple[str, str]:
     kind = "warning" if a.cv > 0.8 else "info"
-    return kind, (f"Die Werte streuen um ihren Erwartungswert mit Std/Mittel **{de(a.cv, 2)}**; ein Exponentialverteilter hat genau 1,00. "
+    return kind, (f"Die Werte streuen um ihren Erwartungswert mit dem Variationskoeffizienten **{de(a.cv, 2)}**; ein Exponentialverteilter hat genau 1,00. "
                   f"Mehr Werte (n) ändern daran bei weißem Rauschen nichts, sie machen nur die Frequenzachse feiner ({a.settings.n // 2 + 1} Bins).")
 
 
 def verdict_variation(rows: list[dict]) -> tuple[str, str]:
     lo, hi = rows[0], rows[-1]
-    return "warning", (f"Std/Mittel je Bin ist {de(lo['cv'], 2)} bei n = {lo['n']} und {de(hi['cv'], 2)} bei n = {hi['n']}: **keine Beruhigung**. "
+    return "warning", (f"Der Variationskoeffizient je Bin ist {de(lo['cv'], 2)} bei n = {lo['n']} und {de(hi['cv'], 2)} bei n = {hi['n']}: **keine Beruhigung**. "
                        f"Der Logarithmus streut um {de(hi['db_std'], 1)} dB (Theorie 5,6 dB) und liegt im Mittel {de(abs(hi['db_bias']), 1)} dB unter dem Erwartungswert.")
 
 
